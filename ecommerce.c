@@ -24,6 +24,8 @@ struct Carrinho {
     int quantidade;
 };
 
+
+
 void trim(char str[]) {//limpa os espacos em branco no inicio e no fim
 
     int i, j;
@@ -44,7 +46,7 @@ void trim(char str[]) {//limpa os espacos em branco no inicio e no fim
     }
 }
 
-void data_hora_atual(int &dia, int &mes, int &ano, int &hora, int &min, int &seg) {
+void data_hora_atual(int &dia, int &mes, int &ano, int &hora, int &min, int &seg){
 time_t t = time(NULL);
 struct tm lt = *localtime(&t);
 ano = lt.tm_year + 1900;
@@ -114,6 +116,34 @@ i++;
 return -1;
 }
 
+int exclui_cadastro(Produto cadastros[], Carrinho itens[]){
+
+    int cod;
+
+    puts("-------------------");
+    puts("Exclusao de Produto");
+    puts("-------------------");
+    printf("Codigo: ");
+    scanf("%d", &cod);
+
+    for(int i=0; i < 50; i++){
+       if(cod == itens[i].codigo_c){
+        puts("Erro. Produto ja esta no carrinho");
+        return -1;
+       }
+       else if (cod == cadastros[i].codigo){
+        if(cadastros[i].qtd_estoque == 0){
+         puts("Erro. Produto em estoque");
+         return -1;  
+        }
+        else 
+        
+       }
+    }
+    
+
+}
+
 void incluir_produto_carrinho(){
     int codigo, quantidade;
 puts("-------------------------------");
@@ -130,7 +160,7 @@ scanf("%d", &quantidade);
 
 int imprime_menu_produtos(Produto cadastros[], Carrinho itens[]){
 
-    int opcao, volta=0; posicao_p = 0;
+    int opcao, volta=0, posicao_p = 0;
 
     do{
         puts("================");
@@ -147,7 +177,7 @@ int imprime_menu_produtos(Produto cadastros[], Carrinho itens[]){
         if(opcao==1)
         volta = cadastra_produto(cadastros, posicao_p);
         else if(opcao==2)
-        volta = exclui_cadastro(cadastros,)    
+        volta = exclui_cadastro(cadastros, itens);    
     }while(volta = -1);
 
     
