@@ -164,6 +164,8 @@ int exclui_cadastro(Produto cadastros[], Carrinho itens[], int &limite){
 int altera_cadastro(Produto cadastros[], int limite){
 
     int cod, troca;
+    double preco;
+    
     puts("--------------------");
     puts("Alteracao de Produto");
     puts("--------------------");
@@ -177,7 +179,7 @@ int altera_cadastro(Produto cadastros[], int limite){
             if(troca != -1)
             cadastros[i].qtd_estoque = troca;
             printf("Preco (-1 nao altera): ");
-            scanf(" ")
+            scanf("%f", &preco);
         }
     }
 
