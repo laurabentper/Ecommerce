@@ -161,15 +161,26 @@ int exclui_cadastro(Produto cadastros[], Carrinho itens[], int &limite){
     return -1;
 }
 
-int altera_cadastro(Produto cadastros[]){
+int altera_cadastro(Produto cadastros[], int limite){
 
-    int cod;
+    int cod, troca;
     puts("--------------------");
     puts("Alteracao de Produto");
     puts("--------------------");
     printf("Codigo: ");
     scanf("%d", &cod);
-    
+
+    for(int i=0; i<limite; i++){
+        if(cod == cadastros[i].codigo){
+            printf("Quantidade em estoque (-1 nao altera): ");
+            scanf("%d", &troca);
+            if(troca != -1)
+            cadastros[i].qtd_estoque = troca;
+            printf("Preco (-1 nao altera): ");
+            scanf(" ")
+        }
+    }
+
 }
 
 void incluir_produto_carrinho(){
@@ -207,7 +218,7 @@ int imprime_menu_produtos(Produto cadastros[], Carrinho itens[]){
         else if(opcao==2)
         volta = exclui_cadastro(cadastros, itens, posicao_p);
         else if(opcao==3)
-        volta = altera_cadastro(cadastros);    
+        volta = altera_cadastro(cadastros, posicao_p);    
     }while(volta = -1);
 
 }
