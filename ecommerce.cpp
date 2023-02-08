@@ -25,7 +25,7 @@ struct Carrinho {
 };
 
 
-
+//operacoes simples
 void trim(char str[]) {//limpa os espacos em branco no inicio e no fim
 
     int i, j;
@@ -57,6 +57,20 @@ min = lt.tm_min;
 seg = lt.tm_sec;
 }
 
+void transfere(Produto cadastros[], int i, int &limite){//transfere o ultimo item do vetor para o local do item que deve ser excluido
+
+    cadastros[i].codigo = cadastros[limite-1].codigo;
+    strcpy(cadastros[i].descricao, cadastros[limite-1].descricao);
+    cadastros[i].categoria = cadastros[limite-1].categoria;
+    cadastros[i].qtd_estoque = cadastros[limite-1].qtd_estoque;
+    cadastros[i].preco = cadastros[limite-1].preco;
+    cadastros[i].desconto = cadastros[limite-1].desconto;
+    
+    limite--; 
+}
+
+
+//funcoes de interface
 int cadastra_produto(Produto cadastros[], int &i){
     
 puts("-------------------");
@@ -116,7 +130,7 @@ i++;
 return -1;
 }
 
-int exclui_cadastro(Produto cadastros[], Carrinho itens[]){
+int exclui_cadastro(Produto cadastros[], Carrinho itens[], int &limite){
 
     int cod;
 
@@ -125,23 +139,37 @@ int exclui_cadastro(Produto cadastros[], Carrinho itens[]){
     puts("-------------------");
     printf("Codigo: ");
     scanf("%d", &cod);
+     //falta checar se o item existe no carrinho
+    for(int i=0; i < limite; i++){
 
-    for(int i=0; i < 50; i++){
-       if(cod == itens[i].codigo_c){
-        puts("Erro. Produto ja esta no carrinho");
-        return -1;
-       }
-       else if (cod == cadastros[i].codigo){
-        if(cadastros[i].qtd_estoque == 0){
-         puts("Erro. Produto em estoque");
-         return -1;  
+        if (cod == cadastros[i].codigo){
+            if(cadastros[i].qtd_estoque != 0){
+                puts("Erro. Produto ainda em estoque");
+                return -1;  
+            } else if(i == limite-1){
+                limite--;
+                puts("Cadastro excluido com sucesso!");
+                return -1;
+            } else {
+                transfere(cadastros, i, limite);
+                puts("Cadastro excluido com sucesso!");
+                return -1; 
+            }          
         }
-        else 
-        
-       }
     }
-    
+    puts("Produto não consta nos cadastros.");
+    return -1;
+}
 
+int altera_cadastro(Produto cadastros[]){
+
+    int cod;
+    puts("--------------------");
+    puts("Alteracao de Produto");
+    puts("--------------------");
+    printf("Codigo: ");
+    scanf("%d", &cod);
+    
 }
 
 void incluir_produto_carrinho(){
@@ -177,10 +205,10 @@ int imprime_menu_produtos(Produto cadastros[], Carrinho itens[]){
         if(opcao==1)
         volta = cadastra_produto(cadastros, posicao_p);
         else if(opcao==2)
-        volta = exclui_cadastro(cadastros, itens);    
+        volta = exclui_cadastro(cadastros, itens, posicao_p);
+        else if(opcao==3)
+        volta = altera_cadastro(cadastros);    
     }while(volta = -1);
-
-    
 
 }
 
