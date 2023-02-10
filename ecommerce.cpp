@@ -57,7 +57,7 @@ min = lt.tm_min;
 seg = lt.tm_sec;
 }
 
-void transfere(Produto cadastros[], int i, int limite){//transfere o ultimo item do vetor para o local do item que deve ser excluido
+void exclui_item(Produto cadastros[], int i, int limite){//transfere o ultimo item do vetor para o local do item que deve ser excluido
 
     cadastros[i].codigo = cadastros[limite-1].codigo;
     strcpy(cadastros[i].descricao, cadastros[limite-1].descricao);
@@ -162,7 +162,7 @@ int exclui_cadastro(Produto cadastros[], Carrinho itens[], int &limite){
                 puts("Cadastro excluido com sucesso!");
                 return -1;
             } else {
-                transfere(cadastros, i, limite);
+                exclui_item(cadastros, i, limite);
                 limite--;
                 puts("Cadastro excluido com sucesso!");
                 return -1; 
@@ -209,16 +209,7 @@ int altera_cadastro(Produto cadastros[], int limite){
 
 }
 
-void ordena_categoria(Produto cadastros[], int limite){
-    Produto aux;
-    bool trocou = true;
-
-    for(int k=limite-1; k>0 && trocou; k--){
-        trocou = false;
-        for(int i=0; i<k; i++){
-            if(cadastros[i].categoria > cadastros[i+1].categoria ||
-             (cadastros[i].categoria == cadastros[i+1].categoria && 
-             strcmpi(cadastros[i].descricao, cadastros[i+1].descricao) > 0)){
+void troca_vetor(Produto cadastros[], Produto &aux, int i){
 
              aux.codigo = cadastros[i+1].codigo;
              strcpy(aux.descricao, cadastros[i+1].descricao);
@@ -241,12 +232,41 @@ void ordena_categoria(Produto cadastros[], int limite){
              cadastros[i].preco = aux.preco;
              cadastros[i].desconto = aux.desconto;
 
-             trocou = true;
+};
 
+void ordena_categoria(Produto cadastros[], int limite){
+
+    Produto aux;
+    bool trocou = true;
+
+    for(int k=limite-1; k>0 && trocou; k--){
+        trocou = false;
+        for(int i=0; i<k; i++){
+            if(cadastros[i].categoria > cadastros[i+1].categoria ||
+             cadastros[i].categoria == cadastros[i+1].categoria && 
+             strcmpi(cadastros[i].descricao, cadastros[i+1].descricao) > 0){
+             troca_vetor(cadastros, aux, i);
+             trocou = true;
             }
         }
     }
 }
+
+void ordena_preco(Produto cadastros[], int limite){
+
+    Produto aux;
+    bool trocou = true;
+
+    for(int k=limite-1; k>0 && trocou; k--){
+        trocou = false;
+        for(int i=0; i<k; i++){
+            if(cadastros[i].preco > cadastros[i+1].preco){
+             troca_vetor(cadastros, aux, i);
+             trocou = true;
+            }
+        }
+    }
+};
 
 int consulta_categoria(Produto cadastros[], int qtd_produtos){
 
@@ -268,6 +288,26 @@ int consulta_categoria(Produto cadastros[], int qtd_produtos){
     return -1;  
 }
 
+int consulta_preco(Produto cadastros[], int qtd_produtos){
+
+    if(qtd_produtos == 0){
+        puts("Nao ha produtos cadastrados.");
+        return -1;
+    } else
+
+    ordena_preco(cadastros, qtd_produtos);
+
+    puts("----------------------------------------------------------------------");
+    puts("Codigo  Descricao                      Categ.  Qtd     Preco  Desconto");
+    puts("----------------------------------------------------------------------");
+
+    for(int i=0; i<qtd_produtos; i++){
+    printf(" %d   %s                   %c  %d      %f  %d\n", cadastros[i].codigo, cadastros[i].descricao,
+     cadastros[i].categoria, cadastros[i].qtd_estoque, cadastros[i].preco, cadastros[i].desconto);
+    }
+    return -1; 
+};
+
 void incluir_produto_carrinho(){
     int codigo, quantidade;
 puts("-------------------------------");
@@ -282,9 +322,9 @@ scanf("%d", &quantidade);
 
 }
 
-int imprime_menu_produtos(Produto cadastros[], Carrinho itens[]){
+int imprime_menu_produtos(Produto cadastros[], Carrinho itens[], int &qtd_produtos){
 
-    int opcao, volta=0, qtd_produtos = 0;
+    int opcao, volta=0;
 
     do{
         puts("================");
@@ -307,7 +347,7 @@ int imprime_menu_produtos(Produto cadastros[], Carrinho itens[]){
         else if(opcao==4)
         volta = consulta_categoria(cadastros, qtd_produtos);
         else if(opcao==5)
-        //codar
+        volta = consulta_preco(cadastros, qtd_produtos);
         else
          return -1;    
     }while(volta = -1);
@@ -332,7 +372,7 @@ if(opcao==1)
 return opcao;
 }
 
-int imprime_menu_principal(Produto cadastros[], Carrinho itens[]){
+int imprime_menu_principal(Produto cadastros[], Carrinho itens[], int &qtd_produtos){
 
     int opcao, volta=0;
 
@@ -350,7 +390,7 @@ int imprime_menu_principal(Produto cadastros[], Carrinho itens[]){
         }while(opcao !=1 && opcao !=2 && opcao !=3 && opcao !=4);
 
         if(opcao==1)
-        volta = imprime_menu_produtos(cadastros, itens);
+        volta = imprime_menu_produtos(cadastros, itens, qtd_produtos);
         else if(opcao==2)
         volta = imprime_menu_carrinho(cadastros, itens);
         else if(opcao==3)
@@ -365,8 +405,9 @@ int main(){
 
     Produto cadastros[50];
     Carrinho itens[50];
+    int qtd_produtos = 0;
 
 
-    imprime_menu_principal(cadastros, itens);
+    imprime_menu_principal(cadastros, itens, qtd_produtos);
 
 }
