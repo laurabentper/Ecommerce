@@ -79,155 +79,8 @@ bool eh_codigo_repetido(Produto cadastros[], int cod, int limite){
 }
 
 //funcoes de interface
-int cadastra_produto(Produto cadastros[], int &i){
-    
-    char c;
-    int cod;
-    bool teste;
-
-puts("-------------------");
-puts("Inclusao de Produto");
-puts("-------------------");
-do{
-    do{ //le o codigo
-    printf("Codigo: ");
-    scanf("%d", &cod);
-    if(cod < 1 || cod > 999)
-    puts("Codigo invalido. Digite um numero entre 1 e 999.\n");
-    }while(cod < 1 || cod > 999);
-
-    teste = eh_codigo_repetido(cadastros, cod, i);
-
-    if(teste)
-        puts("Este produto ja esta cadastrado\n");    
-    else 
-    cadastros[i].codigo = cod;    
-} while(teste); 
 
 
-do{//le descricao
-    getchar();
-    printf("Descricao: ");
-    gets(cadastros[i].descricao);
-    trim(cadastros[i].descricao);
-    if(strlen(cadastros[i].descricao) < 4 || strlen(cadastros[i].descricao) > 40)
-    puts("Tamanho incompativel.\n");
-}while(strlen(cadastros[i].descricao) < 4 || strlen(cadastros[i].descricao) > 40);
-
-do{//le categoria
-    getchar();
-    printf("Categoria: ");
-    c = getchar();
-
-    if(c == 'A' || c =='a')
-    cadastros[i].categoria = 'A';
-    else if (c == 'B' || c =='b')
-    cadastros[i].categoria = 'B';
-    else if (c == 'C' || c =='c')
-    cadastros[i].categoria = 'C';
-    else if (c == 'D' || c =='d')
-    cadastros[i].categoria = 'D';
-    else if (c == 'E' || c =='e')
-    cadastros[i].categoria = 'E';
-    else
-    puts("Categoria invalida.");
-
-}while(cadastros[i].categoria != 'A' && cadastros[i].categoria != 'B' 
-    && cadastros[i].categoria != 'C' && cadastros[i].categoria != 'D' 
-    && cadastros[i].categoria != 'E');
-
-do{// le qtd de estoque
-    printf("Quantidade no estoque: ");
-    scanf("%d", &cadastros[i].qtd_estoque);
-    if(cadastros[i].qtd_estoque<1 || cadastros[i].qtd_estoque>9999)
-    puts("Quantidade invalida.\n");
-}while(cadastros[i].qtd_estoque<1 || cadastros[i].qtd_estoque>9999);
-
-do{//le preco
-    printf("Preco: ");
-    scanf("%f", &cadastros[i].preco);
-    if(cadastros[i].preco<0.01 || cadastros[i].preco > 9999999.99)
-    printf("Valor invalido.\n");
-}while(cadastros[i].preco<0.01 || cadastros[i].preco > 9999999.99);
-
-do{//le desconto
-    printf("Desconto: ");
-    scanf("%d", &cadastros[i].desconto);
-    if(cadastros[i].desconto < 0 || cadastros[i].desconto > 99)
-    puts("Valor invalido.");
-}while(cadastros[i].desconto < 0 || cadastros[i].desconto > 99);
-
-i++;
-return -1;
-}
-
-int exclui_cadastro(Produto cadastros[], Carrinho itens[], int &limite){
-
-    int cod;
-
-    puts("-------------------");
-    puts("Exclusao de Produto");
-    puts("-------------------");
-    printf("Codigo: ");
-    scanf("%d", &cod);
-     //falta checar se o item existe no carrinho
-    for(int i=0; i < limite; i++){
-
-        if (cod == cadastros[i].codigo){
-            if(cadastros[i].qtd_estoque != 0){
-                puts("Erro. Produto ainda em estoque");
-                return -1;  
-            } else if(i == limite-1){
-                limite--;
-                puts("Cadastro excluido com sucesso!");
-                return -1;
-            } else {
-                exclui_item(cadastros, i, limite);
-                limite--;
-                puts("Cadastro excluido com sucesso!");
-                return -1; 
-            }          
-        }
-    }
-    puts("Produto não consta nos cadastros.");
-    return -1;
-}
-
-int altera_cadastro(Produto cadastros[], int limite){
-
-    int cod, troca, desconto;
-    double preco;
-    
-    puts("--------------------");
-    puts("Alteracao de Produto");
-    puts("--------------------");
-    printf("Codigo: ");
-    scanf("%d", &cod);
-
-    for(int i=0; i<limite; i++){
-        if(cod == cadastros[i].codigo){
-
-            printf("Quantidade em estoque (-1 nao altera): ");
-            scanf("%d", &troca);
-            if(troca != -1)
-            cadastros[i].qtd_estoque = troca;
-
-            printf("Preco (-1 nao altera): ");
-            scanf("%f", &preco);
-            if(preco != -1)
-            cadastros[i].preco = preco;
-
-            printf("Desconto (-1 nao altera): ");
-            scanf("%d", &desconto);
-            if(desconto != -1)
-            cadastros[i].desconto = desconto;
-            
-            puts("Mudancas salvas.");
-            return -1;
-        }
-    }
-
-}
 
 void troca_vetor(Produto cadastros[], Produto &aux, int i){
 
@@ -342,38 +195,6 @@ scanf("%d", &quantidade);
 
 }
 
-int imprime_menu_produtos(Produto cadastros[], Carrinho itens[], int &qtd_produtos){
-
-    int opcao, volta=0;
-
-    do{
-        puts("================");
-        puts("Menu de Produtos");
-        puts("================");    
-        printf("1-Incluir\n2-Excluir\n3-Alterar\n4-Consultar por Categoria\n5-Consultar por preco\n6-Voltar\n");
-        do{
-        printf("Opcao: ");
-        scanf("%d", &opcao);
-        if(opcao<1 || opcao > 6)
-        puts("Opcao invalida.\n");
-        }while(opcao<1 || opcao>6);
-
-        if(opcao==1)
-        volta = cadastra_produto(cadastros, qtd_produtos);
-        else if(opcao==2)
-        volta = exclui_cadastro(cadastros, itens, qtd_produtos);
-        else if(opcao==3)
-        volta = altera_cadastro(cadastros, qtd_produtos);
-        else if(opcao==4)
-        volta = consulta_categoria(cadastros, qtd_produtos);
-        else if(opcao==5)
-        volta = consulta_preco(cadastros, qtd_produtos);
-        else
-         return -1;    
-    }while(volta = -1);
-
-}
-
 int imprime_menu_carrinho(Produto cadastros[], Carrinho itens[]){
     int opcao;
 puts("================");
@@ -392,7 +213,204 @@ if(opcao==1)
 return opcao;
 }
 
-int imprime_menu_principal(Produto cadastros[], Carrinho itens[], int &qtd_produtos){
+int altera_cadastro(Produto cadastros[], int limite){
+
+    int cod, troca, desconto;
+    double preco;
+    
+    puts("--------------------");
+    puts("Alteracao de Produto");
+    puts("--------------------");
+    printf("Codigo: ");
+    scanf("%d", &cod);
+
+    for(int i=0; i<limite; i++){
+        if(cod == cadastros[i].codigo){
+
+            do{// le qtd de estoque
+            printf("Quantidade em estoque (-1 não altera): ");
+            scanf("%d", &troca);
+            if( troca < -1 || troca > 9999)
+            puts("Quantidade invalida. Insira um numero entre 0 e 9999.\n");
+            }while( troca < -1 || troca > 9999);
+
+            if(troca > -1)
+            cadastros[i].qtd_estoque = troca;
+
+            do{//le preco
+            printf("Preco (-1 nao altera): ");
+            scanf("%f", &preco);
+            if(preco == -1)
+            break;
+            if(preco < 0.01 || preco > 9999999.99)
+            printf("Valor invalido.\n");
+            else 
+                cadastros[i].preco = preco;
+            }while(preco < 0.01 || preco > 9999999.99);
+
+            do{//le desconto
+            printf("Porcentagem de desconto (-1 nao altera): ");
+            scanf("%d", &desconto);
+            if(desconto == -1)
+            break;
+            if(desconto < 0 || desconto > 99)
+            puts("Valor invalido.\n");
+            else
+                cadastros[i].desconto = desconto;
+            }while(desconto < 0 || desconto > 99);
+            
+            puts("Mudancas salvas.\n");
+            return -1;
+        }
+    }
+    puts("Codigo nao encontrado nos registros. Nao foi possivel alterar.");
+    return -1;
+}
+
+int exclui_cadastro(Produto cadastros[], Carrinho itens[], int &limite){
+
+    int cod;
+
+    puts("-------------------");
+    puts("Exclusao de Produto");
+    puts("-------------------");
+    printf("Codigo: ");
+    scanf("%d", &cod);
+
+     //falta checar se o item existe no carrinho
+    for(int i=0; i < limite; i++){
+        if (cod == cadastros[i].codigo){
+            if(i == limite-1){
+                limite--;
+                puts("Cadastro excluido com sucesso!");
+                return -1;
+            } else {
+                exclui_item(cadastros, i, limite);
+                limite--;
+                puts("Cadastro excluido com sucesso!");
+                return -1; 
+            }          
+        }
+    }
+    puts("Produto não consta nos cadastros.");
+    return -1;
+}
+
+int cadastra_produto(Produto cadastros[], int &i){
+    
+    char c;
+    int cod;
+    bool codigo_repetido;
+
+    puts("-------------------");
+    puts("Inclusao de Produto");
+    puts("-------------------");
+
+    do{
+        do{ //le o codigo
+        printf("Codigo: ");
+        scanf("%d", &cod);
+        if(cod < 1 || cod > 999)
+        puts("Codigo invalido. Digite um numero entre 1 e 999.\n");
+        }while(cod < 1 || cod > 999);
+
+        codigo_repetido = eh_codigo_repetido(cadastros, cod, i);
+
+        if(codigo_repetido)
+            puts("Este produto ja esta cadastrado\n");    
+        else 
+        cadastros[i].codigo = cod;    
+    } while(codigo_repetido); 
+
+    do{//le descricao
+        getchar();
+        printf("Descricao: ");
+        gets(cadastros[i].descricao);
+        trim(cadastros[i].descricao);
+        if(strlen(cadastros[i].descricao) < 4 || strlen(cadastros[i].descricao) > 40)
+        puts("Tamanho incompativel.\n");
+    }while(strlen(cadastros[i].descricao) < 4 || strlen(cadastros[i].descricao) > 40);
+
+    do{//le categoria
+        getchar();
+        printf("Categoria: ");
+        c = getchar();
+
+        if(c == 'A' || c =='a')
+        cadastros[i].categoria = 'A';
+        else if (c == 'B' || c =='b')
+        cadastros[i].categoria = 'B';
+        else if (c == 'C' || c =='c')
+        cadastros[i].categoria = 'C';
+        else if (c == 'D' || c =='d')
+        cadastros[i].categoria = 'D';
+        else if (c == 'E' || c =='e')
+        cadastros[i].categoria = 'E';
+        else
+        puts("Categoria invalida.");
+
+    }while(cadastros[i].categoria != 'A' && cadastros[i].categoria != 'B' 
+        && cadastros[i].categoria != 'C' && cadastros[i].categoria != 'D' 
+        && cadastros[i].categoria != 'E');
+
+    do{// le qtd de estoque
+        printf("Quantidade no estoque: ");
+        scanf("%d", &cadastros[i].qtd_estoque);
+        if(cadastros[i].qtd_estoque<0 || cadastros[i].qtd_estoque>9999)
+        puts("Quantidade invalida.\n");
+    }while(cadastros[i].qtd_estoque < 0 || cadastros[i].qtd_estoque > 9999);
+
+    do{//le preco
+        printf("Preco: ");
+        scanf("%f", &cadastros[i].preco);
+        if(cadastros[i].preco<0.01 || cadastros[i].preco > 9999999.99)
+        printf("Valor invalido.\n");
+    }while(cadastros[i].preco<0.01 || cadastros[i].preco > 9999999.99);
+
+    do{//le desconto
+        printf("Porcentagem de desconto: ");
+        scanf("%d", &cadastros[i].desconto);
+        if(cadastros[i].desconto < 0 || cadastros[i].desconto > 99)
+        puts("Valor invalido.");
+    }while(cadastros[i].desconto < 0 || cadastros[i].desconto > 99);
+
+    i++;
+    return -1;
+}
+
+int imprime_menu_produtos(Produto cadastros[], Carrinho itens[], int &qtd_produtos){
+
+    int opcao, volta=0;
+
+    do{
+        puts("================");
+        puts("Menu de Produtos");
+        puts("================");    
+        printf("1-Incluir\n2-Excluir\n3-Alterar\n4-Consultar por Categoria\n5-Consultar por preco\n6-Voltar\n");
+        do{
+        printf("Opcao: ");
+        scanf("%d", &opcao);
+        if(opcao < 1 || opcao > 6)
+        puts("Opcao invalida.\n");
+        }while(opcao < 1 || opcao > 6);
+
+        if(opcao==1)
+        volta = cadastra_produto(cadastros, qtd_produtos);
+        else if(opcao==2)
+        volta = exclui_cadastro(cadastros, itens, qtd_produtos);
+        else if(opcao==3)
+        volta = altera_cadastro(cadastros, qtd_produtos);
+        else if(opcao==4)
+        volta = consulta_categoria(cadastros, qtd_produtos);
+        else if(opcao==5)
+        volta = consulta_preco(cadastros, qtd_produtos);
+        else
+         return -1;    
+    }while(volta = -1);
+
+}
+
+int imprime_menu_principal(Produto cadastros[], Carrinho itens[], int &contador_produtos){
 
     int opcao, volta=0;
 
@@ -410,7 +428,7 @@ int imprime_menu_principal(Produto cadastros[], Carrinho itens[], int &qtd_produ
         }while(opcao !=1 && opcao !=2 && opcao !=3 && opcao !=4);
 
         if(opcao==1)
-        volta = imprime_menu_produtos(cadastros, itens, qtd_produtos);
+        volta = imprime_menu_produtos(cadastros, itens, contador_produtos);
         else if(opcao==2)
         volta = imprime_menu_carrinho(cadastros, itens);
         else if(opcao==3)
@@ -425,9 +443,9 @@ int main(){
 
     Produto cadastros[50];
     Carrinho itens[50];
-    int qtd_produtos = 0;
+    int contador_produtos = 0;
 
 
-    imprime_menu_principal(cadastros, itens, qtd_produtos);
+    imprime_menu_principal(cadastros, itens, contador_produtos);
 
 }
