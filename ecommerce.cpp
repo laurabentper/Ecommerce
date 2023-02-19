@@ -68,22 +68,42 @@ void exclui_item(Produto cadastros[], int i, int limite){//transfere o ultimo it
      
 }
 
+bool eh_codigo_repetido(Produto cadastros[], int cod, int limite){
+
+    for(int i=0; i<limite; i++){
+        if(cod == cadastros[i].codigo)
+        return true;
+    }
+
+    return false;
+}
 
 //funcoes de interface
 int cadastra_produto(Produto cadastros[], int &i){
     
     char c;
+    int cod;
+    bool teste;
 
 puts("-------------------");
 puts("Inclusao de Produto");
 puts("-------------------");
+do{
+    do{ //le o codigo
+    printf("Codigo: ");
+    scanf("%d", &cod);
+    if(cod < 1 || cod > 999)
+    puts("Codigo invalido. Digite um numero entre 1 e 999.\n");
+    }while(cod < 1 || cod > 999);
 
-do{ //le o codigo
-printf("Codigo: ");
-scanf("%d", &cadastros[i].codigo);
-if(cadastros[i].codigo < 1 || cadastros[i].codigo > 999)
-puts("Codigo invalido. Digite um numero entre 1 e 999.\n");
-}while(cadastros[i].codigo < 1 || cadastros[i].codigo > 999);
+    teste = eh_codigo_repetido(cadastros, cod, i);
+
+    if(teste)
+        puts("Este produto ja esta cadastrado\n");    
+    else 
+    cadastros[i].codigo = cod;    
+} while(teste); 
+
 
 do{//le descricao
     getchar();
